@@ -41,6 +41,38 @@ describe("App component", () => {
     );
   });
 
+  it("should be able to add a like on a repository", async () => {
+    const { getByTestId } = render(<App />);
+
+    apiMock.onGet("repositories").reply(200, [
+      {
+        id: "123",
+        url: "https://github.com/josepholiveira",
+        title: "Desafio ReactJS",
+        techs: ["React", "Node.js"],
+      },
+    ]);
+
+    apiMock.onPost("repositories/123/like").reply(200, {
+        id: "123",
+        url: "https://github.com/josepholiveira",
+        title: "Desafio ReactJS",
+        techs: ["React", "Node.js"],
+        likes: 1,
+      },
+    );
+
+    await actWait();
+    
+    fireEvent.click(getByTestId("like-button-123"));
+
+    await actWait();
+
+    expect(getByTestId("like-label-123")).toContainHTML(
+      1
+    );
+  });
+
   it("should be able to remove repository", async () => {
     const { getByText, getByTestId } = render(<App />);
 
